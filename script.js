@@ -180,10 +180,10 @@ function initGSAP() {
     // This prevents the fixed hero gradient from showing behind sections
     ScrollTrigger.create({
         trigger: ".marquee-section",
-        start: "top bottom",
-        end: "top top",
+        start: "top top", // Only hide when marquee reaches the top of viewport
+        end: "bottom top",
         onEnter: () => {
-            // Hide hero and overlay when marquee section starts entering
+            // Hide hero and overlay when marquee section covers the screen
             if (hero) {
                 hero.style.visibility = 'hidden';
                 hero.style.pointerEvents = 'none';
