@@ -427,38 +427,62 @@ function initCounterUp() {
 /* --- FORM HANDLER --- */
 function initFormHandler() {
     const form = document.getElementById('contact-form');
+    const phoneInput = document.getElementById('phone');
 
     if (!form) return;
+
+    // Phone masking logic
+    if (phoneInput) {
+        phoneInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+
+            let masked = '';
+            if (value.length > 0) {
+                masked = '(' + value.substring(0, 2);
+                if (value.length > 2) {
+                    masked += ') ' + value.substring(2, 7);
+                    if (value.length > 7) {
+                        masked += '-' + value.substring(7, 11);
+                    }
+                }
+            }
+            e.target.value = masked;
+        });
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
         const message = document.getElementById('message').value;
 
-        // Create WhatsApp message
+        // Create personalized and professional WhatsApp message
         const whatsappMessage = encodeURIComponent(
-            `*Nova mensagem do site Open Doors*\n\n` +
-            `*Nome:* ${name}\n` +
+            `Olá! Sou ${name} e acabei de visitar o site da Open Doors.\n\n` +
+            `Gostaria de entrar em contato para conversarmos sobre um projeto. Aqui estão meus dados:\n\n` +
+            `*Telefone:* ${phone}\n` +
             `*Email:* ${email}\n\n` +
-            `*Mensagem:*\n${message}`
+            `*Mensagem:*\n"${message}"`
         );
 
         // Open WhatsApp with the message
-        window.open(`https://wa.me/5500000000000?text=${whatsappMessage}`, '_blank');
+        const waUrl = `https://wa.me/5514991810574?text=${whatsappMessage}`;
 
         // Show success feedback
         const btn = form.querySelector('button[type="submit"]');
         const originalText = btn.textContent;
-        btn.textContent = '✓ Redirecionando para WhatsApp...';
+        btn.textContent = '✓ Redirecionando...';
         btn.disabled = true;
 
         setTimeout(() => {
+            window.open(waUrl, '_blank');
             btn.textContent = originalText;
             btn.disabled = false;
             form.reset();
-        }, 3000);
+        }, 1500);
     });
 }
 
