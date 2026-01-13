@@ -1449,3 +1449,57 @@ section {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- ICON STYLES --- */
+.icon-sm {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Lucide Icons Styling */
+[data-lucide] {
+    stroke-width: 1.5px;
+}
+
+.service-icon [data-lucide],
+.service-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--white) !important;
+}
+
+.differential-item .icon [data-lucide],
+.differential-item .icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--white) !important;
+}
+
+.contact-item .icon svg,
+.contact-item .icon [data-lucide] {
+    width: 24px;
+    height: 24px;
+    color: var(--white) !important;
+}
+
+.social-link svg,
+.social-link [data-lucide] {
+    width: 20px;
+    height: 20px;
+    color: var(--white) !important;
+}
+
+.contact-link-hover {
+    transition: var(--transition-fast);
+}
+
+.contact-link-hover:hover {
+    color: var(--accent);
+}
+
+.btn svg,
+.btn .icon-sm {
+    margin-right: 10px;
+}

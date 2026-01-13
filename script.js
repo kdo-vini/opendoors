@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initFormHandler();
     initCurrentYear();
     initMobileSwipeIndicator();
+
+    // Initialize Lucide Icons
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 });
 
 /* --- PRELOADER --- */
