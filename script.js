@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCounterUp();
     initFormHandler();
     initCurrentYear();
+    initMobileSwipeIndicator();
 });
 
 /* --- PRELOADER --- */
@@ -127,6 +128,9 @@ function initLenis() {
 function initGSAP() {
     gsap.registerPlugin(ScrollTrigger);
 
+    const hero = document.getElementById('hero');
+    const overlayContainer = document.querySelector('.overlay-container');
+
     // Door Opening Animation
     const doorTimeline = gsap.timeline({
         scrollTrigger: {
@@ -166,6 +170,34 @@ function initGSAP() {
             scale: 1,
             ease: "power2.out"
         }, 0);
+
+    // Hide hero completely when user scrolls past the door animation area
+    // This prevents the fixed hero gradient from showing behind sections
+    ScrollTrigger.create({
+        trigger: ".marquee-section",
+        start: "top bottom",
+        end: "top top",
+        onEnter: () => {
+            // Hide hero and overlay when marquee section starts entering
+            if (hero) {
+                hero.style.visibility = 'hidden';
+                hero.style.pointerEvents = 'none';
+            }
+            if (overlayContainer) {
+                overlayContainer.style.visibility = 'hidden';
+            }
+        },
+        onLeaveBack: () => {
+            // Show hero and overlay when scrolling back up
+            if (hero) {
+                hero.style.visibility = 'visible';
+                hero.style.pointerEvents = 'auto';
+            }
+            if (overlayContainer) {
+                overlayContainer.style.visibility = 'visible';
+            }
+        }
+    });
 
     // Marquee animation enhancement
     gsap.to(".marquee-track", {
@@ -433,6 +465,38 @@ function initCurrentYear() {
     }
 }
 
+/* --- MOBILE SWIPE INDICATOR --- */
+function initMobileSwipeIndicator() {
+    const indicator = document.getElementById('mobile-swipe-indicator');
+
+    if (!indicator) return;
+
+    // Hide indicator once user starts scrolling
+    let hasScrolled = false;
+
+    const hideIndicator = () => {
+        if (!hasScrolled && window.scrollY > 50) {
+            hasScrolled = true;
+            indicator.classList.add('hidden');
+        }
+    };
+
+    // Listen for scroll
+    window.addEventListener('scroll', hideIndicator, { passive: true });
+
+    // Also hide on touch start (for immediate feedback)
+    document.addEventListener('touchstart', () => {
+        if (!hasScrolled) {
+            setTimeout(() => {
+                if (window.scrollY > 50) {
+                    hasScrolled = true;
+                    indicator.classList.add('hidden');
+                }
+            }, 500);
+        }
+    }, { passive: true });
+}
+
 /* --- SMOOTH SCROLL FOR ANCHOR LINKS --- */
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -494,39 +558,86 @@ document.querySelectorAll('.btn').forEach(btn => {
     });
 });
 
-/* --- TESTIMONIALS AUTO-SCROLL --- */
-(function initTestimonialsAutoScroll() {
-    const slider = document.querySelector('.testimonials-slider');
+/* --- PORTFOLIO CAROUSEL NAVIGATION --- */
+(function initPortfolioCarousel() {
+    const carousel = document.querySelector('.portfolio-carousel');
+    const track = document.querySelector('.carousel-track');
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
 
-    if (!slider) return;
+    if (!carousel || !track) return;
 
-    let isHovering = false;
-    let scrollAmount = 0;
-    const scrollSpeed = 0.5;
+    // Get half the track width (since we duplicated items)
+    const getScrollAmount = () => {
+        const items = track.querySelectorAll('.carousel-item');
+        const itemCount = items.length / 2; // Half since duplicated
+        if (items.length === 0) return 200;
+        const itemWidth = items[0].offsetWidth;
+        const gap = parseInt(getComputedStyle(track).gap) || 32;
+        return itemWidth + gap;
+    };
 
-    slider.addEventListener('mouseenter', () => isHovering = true);
-    slider.addEventListener('mouseleave', () => isHovering = false);
+    // Pause animation on hover is handled by CSS
+    // Manual navigation buttons
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            // Temporarily pause animation and scroll
+            track.style.animationPlayState = 'paused';
+            track.style.transform = `translateX(${getScrollAmount()}px)`;
 
-    function autoScroll() {
-        if (!isHovering) {
-            scrollAmount += scrollSpeed;
-
-            if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
-                scrollAmount = 0;
-            }
-
-            slider.scrollLeft = scrollAmount;
-        } else {
-            scrollAmount = slider.scrollLeft;
-        }
-
-        requestAnimationFrame(autoScroll);
+            setTimeout(() => {
+                track.style.transform = '';
+                track.style.animationPlayState = 'running';
+            }, 500);
+        });
     }
 
-    // Start auto-scroll after a delay
-    setTimeout(() => {
-        autoScroll();
-    }, 3000);
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            // Temporarily pause animation and scroll
+            track.style.animationPlayState = 'paused';
+            track.style.transform = `translateX(-${getScrollAmount()}px)`;
+
+            setTimeout(() => {
+                track.style.transform = '';
+                track.style.animationPlayState = 'running';
+            }, 500);
+        });
+    }
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        track.style.animationPlayState = 'paused';
+    }, { passive: true });
+
+    carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swiped left - go to next
+                track.style.transform = `translateX(-${getScrollAmount()}px)`;
+            } else {
+                // Swiped right - go to prev
+                track.style.transform = `translateX(${getScrollAmount()}px)`;
+            }
+        }
+
+        setTimeout(() => {
+            track.style.transform = '';
+            track.style.animationPlayState = 'running';
+        }, 500);
+    }
 })();
 
 /* --- TYPING EFFECT FOR HERO (Optional Enhancement) --- */

@@ -72,6 +72,14 @@
         </div>
     </div>
 
+    <!-- MOBILE SWIPE INDICATOR -->
+    <div class="mobile-swipe-indicator" id="mobile-swipe-indicator">
+        <div class="swipe-content">
+            <div class="swipe-icon"></div>
+            <span class="swipe-text">Arraste para cima</span>
+        </div>
+    </div>
+
     <!-- SCROLL SPACER (for door animation) -->
     <div class="scroll-spacer"></div>
 
@@ -253,110 +261,82 @@
     <section class="portfolio-section" id="portfolio">
         <div class="container">
             <div class="section-header fade-up">
-                <span class="label">Cases de Sucesso</span>
-                <h2>Marcas Que<br><span class="text-accent">Confiaram em Nós</span></h2>
+                <span class="label">Portfólio</span>
+                <h2>Marcas Que<br><span class="text-accent">Confiam em Nós</span></h2>
             </div>
-            <div class="portfolio-grid">
-                <div class="portfolio-card fade-up delay-1">
-                    <div class="portfolio-image"
-                        style="background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                        <span style="font-size: 4rem;">🍩</span>
-                    </div>
-                    <div class="portfolio-overlay">
-                        <h3>Donutopia</h3>
-                        <p>Branding completo e gestão de redes sociais que triplicou o engajamento.</p>
-                        <a href="https://instagram.com/donutopia.br" target="_blank" class="portfolio-link">
-                            Ver no Instagram →
-                        </a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-2">
-                    <div class="portfolio-image"
-                        style="background: linear-gradient(135deg, #F4A460 0%, #D2691E 100%); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                        <span style="font-size: 4rem;">🥔</span>
-                    </div>
-                    <div class="portfolio-overlay">
-                        <h3>Donna Batata</h3>
-                        <p>Identidade visual e estratégia de conteúdo que impulsionaram as vendas.</p>
-                        <a href="https://instagram.com/donnabatata.promissao" target="_blank" class="portfolio-link">
-                            Ver no Instagram →
-                        </a>
-                    </div>
-                </div>
-                <div class="portfolio-card fade-up delay-3">
-                    <div class="portfolio-image"
-                        style="background: linear-gradient(135deg, #8B4513 0%, #3E2723 100%); display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                        <span style="font-size: 4rem;">☕</span>
-                    </div>
-                    <div class="portfolio-overlay">
-                        <h3>D'Casa Cookies & Coffee</h3>
-                        <p>Gestão completa de social media com crescimento exponencial de seguidores.</p>
-                        <a href="https://instagram.com/dcasa_cookiescoffee" target="_blank" class="portfolio-link">
-                            Ver no Instagram →
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- ==================== TESTIMONIALS SECTION ==================== -->
-    <section class="testimonials-section section-dark" id="depoimentos">
-        <div class="container">
-            <div class="section-header fade-up">
-                <span class="label">Depoimentos</span>
-                <h2>O Que Dizem<br><span class="text-accent">Sobre Nós</span></h2>
-            </div>
-            <div class="testimonials-slider">
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        A identidade visual que criaram para nós é simplesmente perfeita. Nossos clientes elogiam
-                        sempre!
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">V</div>
-                        <div class="testimonial-info">
-                            <h4>Vinicius Nascimento</h4>
-                            <span>Donutopia</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        Profissionalismo e criatividade em outro nível. Eles entendem de verdade o que o cliente
-                        precisa.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">R</div>
-                        <div class="testimonial-info">
-                            <h4>Roberto Lima</h4>
-                            <span>Empresa X</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        A identidade visual que criaram para nós é simplesmente perfeita. Nossos clientes elogiam
-                        sempre!
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">C</div>
-                        <div class="testimonial-info">
-                            <h4>Camila Ferreira</h4>
-                            <span>Empresa Y</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-quote">
-                        Melhor investimento que fiz no meu negócio. Equipe dedicada e resultados que falam por si.
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="testimonial-avatar">P</div>
-                        <div class="testimonial-info">
-                            <h4>Pedro Oliveira</h4>
-                            <span>Empresa XYZ</span>
-                        </div>
+            <!-- Modern Logo Carousel -->
+            <div class="portfolio-carousel-wrapper fade-up">
+                <div class="portfolio-carousel" id="portfolio-carousel">
+                    <div class="carousel-track">
+                        <!-- First set of logos -->
+                        <a href="https://instagram.com/donutopia.br" target="_blank" class="carousel-item"
+                            title="Donutopia">
+                            <img src="media/donutopia-logo.jpeg" alt="Donutopia" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/donnabatata.promissao" target="_blank" class="carousel-item"
+                            title="Donna Batata">
+                            <img src="media/donnabatata-logo.png" alt="Donna Batata" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/dcasa_cookiescoffee" target="_blank" class="carousel-item"
+                            title="D'Casa Cookies & Coffee">
+                            <img src="media/dcasalogo.jpeg" alt="D'Casa Cookies & Coffee" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/hope.personalizadosdeluxe" target="_blank" class="carousel-item"
+                            title="Hope Personalizados">
+                            <img src="media/hope-logo.jpg" alt="Hope Personalizados" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/raacaiofficial" target="_blank" class="carousel-item"
+                            title="RAçai">
+                            <img src="media/raacai-logo.jpeg" alt="RAçai" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/bighouse_decor" target="_blank" class="carousel-item"
+                            title="Big House Decor">
+                            <img src="media/bighousedecor-logo.jpeg" alt="Big House Decor" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/i.b.calvario.promissao" target="_blank" class="carousel-item"
+                            title="Igreja Batista Calvário">
+                            <img src="media/igrejabatistacalvario-logo.jpeg" alt="Igreja Batista Calvário"
+                                loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/ortoclinica.promissao" target="_blank" class="carousel-item"
+                            title="OrtoClínica">
+                            <img src="media/ortoclinica-logo.jpeg" alt="OrtoClínica" loading="lazy">
+                        </a>
+                        <!-- Duplicate set for infinite scroll effect -->
+                        <a href="https://instagram.com/donutopia.br" target="_blank" class="carousel-item"
+                            title="Donutopia">
+                            <img src="media/donutopia-logo.jpeg" alt="Donutopia" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/donnabatata.promissao" target="_blank" class="carousel-item"
+                            title="Donna Batata">
+                            <img src="media/donnabatata-logo.png" alt="Donna Batata" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/dcasa_cookiescoffee" target="_blank" class="carousel-item"
+                            title="D'Casa Cookies & Coffee">
+                            <img src="media/dcasalogo.jpeg" alt="D'Casa Cookies & Coffee" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/hope.personalizadosdeluxe" target="_blank" class="carousel-item"
+                            title="Hope Personalizados">
+                            <img src="media/hope-logo.jpg" alt="Hope Personalizados" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/raacaiofficial" target="_blank" class="carousel-item"
+                            title="RAçai">
+                            <img src="media/raacai-logo.jpeg" alt="RAçai" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/bighouse_decor" target="_blank" class="carousel-item"
+                            title="Big House Decor">
+                            <img src="media/bighousedecor-logo.jpeg" alt="Big House Decor" loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/i.b.calvario.promissao" target="_blank" class="carousel-item"
+                            title="Igreja Batista Calvário">
+                            <img src="media/igrejabatistacalvario-logo.jpeg" alt="Igreja Batista Calvário"
+                                loading="lazy">
+                        </a>
+                        <a href="https://instagram.com/ortoclinica.promissao" target="_blank" class="carousel-item"
+                            title="OrtoClínica">
+                            <img src="media/ortoclinica-logo.jpeg" alt="OrtoClínica" loading="lazy">
+                        </a>
                     </div>
                 </div>
             </div>
