@@ -146,7 +146,17 @@ function initGSAP() {
             trigger: ".scroll-spacer",
             start: "top top",
             end: "bottom bottom",
-            scrub: 1.5
+            scrub: 1.5,
+            onLeave: () => {
+                // Door animation finished — ensure hero is fully hidden
+                if (hero) hero.classList.add('hero-hidden');
+                if (overlayContainer) overlayContainer.style.visibility = 'hidden';
+            },
+            onEnterBack: () => {
+                // User scrolled back up into door animation
+                if (hero) hero.classList.remove('hero-hidden');
+                if (overlayContainer) overlayContainer.style.visibility = 'visible';
+            }
         }
     });
 
@@ -180,31 +190,21 @@ function initGSAP() {
             ease: "power2.out"
         }, 0);
 
-    // Hide hero completely when user scrolls past the door animation area
-    // This prevents the fixed hero gradient from showing behind sections
+    // Hide hero as soon as ANY section starts entering the viewport from the bottom.
+    // Using "top bottom" means: fire when marquee top reaches viewport bottom
+    // (i.e., the moment marquee starts entering). This prevents the hero's
+    // GPU compositor layer from bleeding through sections on mobile.
     ScrollTrigger.create({
         trigger: ".marquee-section",
-        start: "top top", // Only hide when marquee reaches the top of viewport
-        end: "bottom top",
+        start: "top bottom", // Hide as soon as marquee starts entering viewport
         onEnter: () => {
-            // Hide hero and overlay when marquee section covers the screen
-            if (hero) {
-                hero.style.visibility = 'hidden';
-                hero.style.pointerEvents = 'none';
-            }
-            if (overlayContainer) {
-                overlayContainer.style.visibility = 'hidden';
-            }
+            // Use classList so CSS !important overrides GSAP inline opacity
+            if (hero) hero.classList.add('hero-hidden');
+            if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         },
         onLeaveBack: () => {
-            // Show hero and overlay when scrolling back up
-            if (hero) {
-                hero.style.visibility = 'visible';
-                hero.style.pointerEvents = 'auto';
-            }
-            if (overlayContainer) {
-                overlayContainer.style.visibility = 'visible';
-            }
+            if (hero) hero.classList.remove('hero-hidden');
+            if (overlayContainer) overlayContainer.style.visibility = 'visible';
         }
     });
 
