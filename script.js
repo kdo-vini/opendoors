@@ -5,11 +5,12 @@
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all modules
+    // Initialize all modules — ORDER MATTERS:
+    // GSAP must register ScrollTrigger BEFORE Lenis hooks into it
     initPreloader();
     initCustomCursor();
-    initLenis();
-    initGSAP();
+    initGSAP();          // 1st: registers ScrollTrigger plugin
+    initLenis();         // 2nd: hooks into gsap.ticker + ScrollTrigger.update
     initScrollAnimations();
     initCounterUp();
     initFormHandler();
@@ -105,9 +106,11 @@ function initLenis() {
     lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
+        // 'direction' and 'smooth' were removed in Lenis v1.x
+        // Use 'orientation' and 'smoothWheel' instead
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
         smoothTouch: false,
         touchMultiplier: 2,
     });
@@ -121,6 +124,7 @@ function initLenis() {
     gsap.ticker.lagSmoothing(0);
 
     // Integrate with GSAP ScrollTrigger
+    // ScrollTrigger is guaranteed to exist here because initGSAP() runs first
     lenis.on('scroll', ScrollTrigger.update);
 }
 

@@ -72,7 +72,8 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
-    -webkit-text-size-adjust: 100%; /* Prevent iOS auto font size adjustment */
+    -webkit-text-size-adjust: 100%;
+    /* Prevent iOS auto font size adjustment */
     text-size-adjust: 100%;
 }
 
@@ -361,7 +362,8 @@ section {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; /* Use vw not % to always match viewport, not scrollable area */
+    width: 100vw;
+    /* Use vw not % to always match viewport, not scrollable area */
     height: 100vh;
     z-index: 1;
     display: flex;
@@ -373,7 +375,20 @@ section {
     opacity: 0;
     transform: scale(0.8);
     padding: var(--space-md);
-    overflow: hidden; /* Prevent content from escaping hero bounds */
+    overflow: hidden;
+    /* Prevent content from escaping hero bounds */
+    /* Fallback: if GSAP never runs (CDN blocked, JS error), reveal after 3.5s */
+    animation: gsap-fallback-reveal 0.01ms 3500ms forwards;
+}
+
+/* This animation fires once after 3.5s as a safety net.
+   GSAP immediately overrides opacity/transform via inline styles when it works,
+   so in the happy path this has zero visual effect. */
+@keyframes gsap-fallback-reveal {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 /* Hero hidden state — !important overrides GSAP inline opacity */
@@ -1323,11 +1338,14 @@ section {
     border-radius: var(--radius-sm);
     color: var(--white);
     font-family: var(--font-body);
-    font-size: 1rem; /* 16px: prevents iOS auto-zoom on focus */
+    font-size: 1rem;
+    /* 16px: prevents iOS auto-zoom on focus */
     transition: var(--transition-fast);
-    -webkit-appearance: none; /* Remove iOS default styling */
+    -webkit-appearance: none;
+    /* Remove iOS default styling */
     appearance: none;
-    width: 100%; /* Ensure full width on mobile */
+    width: 100%;
+    /* Ensure full width on mobile */
 }
 
 .form-group input:focus,
@@ -1344,7 +1362,8 @@ section {
 
 @media (max-width: 768px) {
     .form-group textarea {
-        resize: none; /* Disable resize handle on mobile (too hard to use) */
+        resize: none;
+        /* Disable resize handle on mobile (too hard to use) */
     }
 }
 
@@ -1516,6 +1535,7 @@ section {
    render above the fixed hero element (which GSAP promotes to a GPU layer
    via opacity animation). Without this, the hero bleeds through on iOS Safari. */
 @media (max-width: 1024px) {
+
     .marquee-section,
     .about-section,
     .services-section,
@@ -1531,10 +1551,12 @@ section {
 
 /* --- TOUCH TARGETS & MOBILE UX --- */
 @media (max-width: 768px) {
+
     /* Minimum 44px touch targets (Apple HIG / WCAG) */
     .btn {
         min-height: 44px;
-        touch-action: manipulation; /* Remove 300ms tap delay */
+        touch-action: manipulation;
+        /* Remove 300ms tap delay */
     }
 
     .social-link {
@@ -1604,6 +1626,7 @@ section {
 
 /* --- PREFERS REDUCED MOTION --- */
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
