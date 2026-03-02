@@ -62,6 +62,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden; /* Prevent horizontal scroll on iOS Safari */
 }
 
 body {
@@ -71,8 +72,9 @@ body {
     font-size: 16px;
     line-height: 1.6;
     overflow-x: hidden;
-    /* Ensure the body covers the hero gradient */
     min-height: 100vh;
+    -webkit-text-size-adjust: 100%; /* Prevent iOS auto font size adjustment */
+    text-size-adjust: 100%;
 }
 
 /* Selection */
@@ -349,6 +351,12 @@ section {
     padding: 0 var(--space-md);
 }
 
+@media (max-width: 480px) {
+    .container {
+        padding: 0 var(--space-sm);
+    }
+}
+
 /* --- HERO SECTION (DOOR ANIMATION) --- */
 .site-content {
     position: fixed;
@@ -383,6 +391,21 @@ section {
     gap: var(--space-sm);
     flex-wrap: wrap;
     justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .hero-cta {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0 var(--space-sm);
+    }
+
+    .hero-cta .btn {
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 /* Scroll Indicator */
@@ -1139,6 +1162,18 @@ section {
     overflow: hidden;
 }
 
+@media (max-width: 768px) {
+    .cta-section {
+        padding: var(--space-xl) var(--space-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .cta-section {
+        padding: var(--space-lg) var(--space-sm);
+    }
+}
+
 .cta-section::before {
     content: '';
     position: absolute;
@@ -1186,6 +1221,14 @@ section {
     gap: var(--space-md);
     justify-content: center;
     flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
+    }
 }
 
 /* --- CONTACT SECTION --- */
@@ -1273,8 +1316,11 @@ section {
     border-radius: var(--radius-sm);
     color: var(--white);
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 1rem; /* 16px: prevents iOS auto-zoom on focus */
     transition: var(--transition-fast);
+    -webkit-appearance: none; /* Remove iOS default styling */
+    appearance: none;
+    width: 100%; /* Ensure full width on mobile */
 }
 
 .form-group input:focus,
@@ -1289,12 +1335,20 @@ section {
     resize: vertical;
 }
 
+@media (max-width: 768px) {
+    .form-group textarea {
+        resize: none; /* Disable resize handle on mobile (too hard to use) */
+    }
+}
+
 /* --- FOOTER --- */
 .footer {
     background: var(--primary-dark);
     position: relative;
     z-index: 200;
     padding: var(--space-lg) var(--space-md) var(--space-md);
+    /* Safe area for devices with home indicator */
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
 }
 
 .footer-content {
@@ -1447,6 +1501,111 @@ section {
 
     .portfolio-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* --- TOUCH TARGETS & MOBILE UX --- */
+@media (max-width: 768px) {
+    /* Minimum 44px touch targets (Apple HIG / WCAG) */
+    .btn {
+        min-height: 44px;
+        touch-action: manipulation; /* Remove 300ms tap delay */
+    }
+
+    .social-link {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .carousel-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .footer-links a {
+        display: inline-block;
+        padding: 6px 0;
+        min-height: 44px;
+        line-height: 32px;
+    }
+
+    /* Prevent hover state sticking on touch devices */
+    .service-card:hover {
+        transform: none;
+    }
+
+    .differential-item:hover {
+        transform: none;
+        background: rgba(255, 195, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        transform: none;
+        box-shadow: var(--shadow-glow);
+    }
+
+    .btn-outline:hover {
+        transform: none;
+    }
+
+    /* About section alignment fix on mobile */
+    .about-content .section-header {
+        text-align: center !important;
+    }
+
+    .about-content {
+        text-align: center;
+    }
+
+    /* Word break for long email/text on mobile */
+    .contact-item a {
+        word-break: break-all;
+        overflow-wrap: anywhere;
+    }
+
+    /* Process timeline padding fix on very small screens */
+    .process-timeline {
+        padding-left: var(--space-md);
+    }
+
+    .process-timeline::before {
+        left: 7px;
+    }
+
+    .step-number {
+        left: calc(-1 * var(--space-md) - 13px);
+    }
+}
+
+/* --- PREFERS REDUCED MOTION --- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    /* Keep marquee and carousel visible but static */
+    .marquee-track {
+        animation: none;
+        display: flex;
+        gap: var(--space-lg);
+    }
+
+    .marquee-track .marquee-content:last-child {
+        display: none;
+    }
+
+    .carousel-track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    html {
+        scroll-behavior: auto;
     }
 }
 

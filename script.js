@@ -112,26 +112,30 @@ function initLenis() {
         touchMultiplier: 2,
     });
 
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // Integrate with GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
+    // Use GSAP ticker only — do NOT add a separate requestAnimationFrame loop
+    // (calling lenis.raf twice per frame causes performance issues and jank)
     gsap.ticker.add((time) => {
         lenis.raf(time * 1000);
     });
 
     gsap.ticker.lagSmoothing(0);
+
+    // Integrate with GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
 }
 
 /* --- GSAP SETUP & DOOR ANIMATION --- */
 function initGSAP() {
     gsap.registerPlugin(ScrollTrigger);
+
+    // Respect user's motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Skip complex animations, just show content immediately
+        gsap.set('.site-content', { opacity: 1, scale: 1 });
+        gsap.set('.door.left', { x: '-100%' });
+        gsap.set('.door.right', { x: '100%' });
+        return;
+    }
 
     const hero = document.getElementById('hero');
     const overlayContainer = document.querySelector('.overlay-container');
@@ -548,44 +552,50 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-/* --- PARALLAX ON ABOUT CARD --- */
-document.addEventListener('mousemove', (e) => {
-    const aboutCard = document.querySelector('.about-card');
+/* --- PARALLAX ON ABOUT CARD (desktop only) --- */
+const isTouchDevice = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
-    if (!aboutCard) return;
+if (!isTouchDevice()) {
+    document.addEventListener('mousemove', (e) => {
+        const aboutCard = document.querySelector('.about-card');
 
-    const rect = aboutCard.getBoundingClientRect();
-    const isHovering = (
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom
-    );
+        if (!aboutCard) return;
 
-    if (isHovering) {
-        const x = (e.clientX - rect.left - rect.width / 2) / 25;
-        const y = (e.clientY - rect.top - rect.height / 2) / 25;
+        const rect = aboutCard.getBoundingClientRect();
+        const isHovering = (
+            e.clientX >= rect.left &&
+            e.clientX <= rect.right &&
+            e.clientY >= rect.top &&
+            e.clientY <= rect.bottom
+        );
 
-        aboutCard.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
-    } else {
-        aboutCard.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
-    }
-});
+        if (isHovering) {
+            const x = (e.clientX - rect.left - rect.width / 2) / 25;
+            const y = (e.clientY - rect.top - rect.height / 2) / 25;
 
-/* --- MAGNETIC BUTTONS --- */
-document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-        const rect = btn.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-
-        btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+            aboutCard.style.transform = `perspective(1000px) rotateY(${x}deg) rotateX(${-y}deg)`;
+        } else {
+            aboutCard.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+        }
     });
+}
 
-    btn.addEventListener('mouseleave', () => {
-        btn.style.transform = 'translate(0px, 0px)';
+/* --- MAGNETIC BUTTONS (desktop only — touch devices don't have hover) --- */
+if (!isTouchDevice()) {
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translate(0px, 0px)';
+        });
     });
-});
+}
 
 /* --- PORTFOLIO CAROUSEL NAVIGATION --- */
 (function initPortfolioCarousel() {
@@ -637,14 +647,24 @@ document.querySelectorAll('.btn').forEach(btn => {
     // Touch swipe support for mobile
     let touchStartX = 0;
     let touchEndX = 0;
+    let isSwiping = false;
 
     carousel.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
+        touchStartX = e.changedTouches[0].clientX; // clientX is relative to viewport (correct)
+        isSwiping = true;
         track.style.animationPlayState = 'paused';
     }, { passive: true });
 
+    carousel.addEventListener('touchmove', (e) => {
+        // Track movement to improve responsiveness
+        if (isSwiping) {
+            touchEndX = e.changedTouches[0].clientX;
+        }
+    }, { passive: true });
+
     carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
+        touchEndX = e.changedTouches[0].clientX;
+        isSwiping = false;
         handleSwipe();
     }, { passive: true });
 
