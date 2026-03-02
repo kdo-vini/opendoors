@@ -30,8 +30,10 @@
     width: max-content;
 }
 
-.carousel-track:hover {
-    animation-play-state: paused;
+@media (hover: hover) {
+    .carousel-track:hover {
+        animation-play-state: paused;
+    }
 }
 
 @keyframes carousel-scroll {
@@ -61,12 +63,6 @@
     overflow: hidden;
 }
 
-.carousel-item:hover {
-    transform: scale(1.1) translateY(-10px);
-    border-color: var(--accent);
-    box-shadow: var(--shadow-glow), var(--shadow-lg);
-}
-
 .carousel-item img {
     width: 100%;
     height: 100%;
@@ -75,9 +71,17 @@
     transition: var(--transition-base);
 }
 
-.carousel-item:hover img {
-    filter: grayscale(0%);
-    transform: scale(1.05);
+@media (hover: hover) {
+    .carousel-item:hover {
+        transform: scale(1.1) translateY(-10px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow-glow), var(--shadow-lg);
+    }
+
+    .carousel-item:hover img {
+        filter: grayscale(0%);
+        transform: scale(1.05);
+    }
 }
 
 /* Carousel Navigation */

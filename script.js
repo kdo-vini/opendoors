@@ -254,13 +254,17 @@ function initScrollAnimations() {
         );
     });
 
+    const isMobileScroll = window.innerWidth <= 768;
+
     // Service cards stagger (guard: only if elements exist)
     if (document.querySelector('.services-grid')) {
         gsap.fromTo(".service-card",
-            { opacity: 0, y: 80, scale: 0.9 },
+            { opacity: 0, y: isMobileScroll ? 20 : 80, scale: isMobileScroll ? 0.98 : 0.9 },
             {
                 opacity: 1, y: 0, scale: 1,
-                duration: 0.8, stagger: 0.15, ease: "power3.out",
+                duration: isMobileScroll ? 0.5 : 0.8,
+                stagger: isMobileScroll ? 0.05 : 0.15,
+                ease: "power2.out",
                 scrollTrigger: {
                     trigger: ".services-grid",
                     start: "top 80%",

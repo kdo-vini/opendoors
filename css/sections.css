@@ -163,9 +163,11 @@
     transition: var(--transition-base);
 }
 
-.differential-item:hover {
-    background: rgba(255, 195, 0, 0.2);
-    transform: translateX(10px);
+@media (hover: hover) {
+    .differential-item:hover {
+        background: rgba(255, 195, 0, 0.2);
+        transform: translateX(10px);
+    }
 }
 
 .differential-item .icon {
@@ -231,16 +233,6 @@
     transition: var(--transition-base);
 }
 
-.service-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--accent);
-    box-shadow: var(--shadow-glow);
-}
-
-.service-card:hover::before {
-    transform: scaleX(1);
-}
-
 .service-icon {
     width: 80px;
     height: 80px;
@@ -255,8 +247,20 @@
     transition: var(--transition-base);
 }
 
-.service-card:hover .service-icon {
-    transform: scale(1.1) rotate(5deg);
+@media (hover: hover) {
+    .service-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent);
+        box-shadow: var(--shadow-glow);
+    }
+
+    .service-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .service-card:hover .service-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
 }
 
 .service-card h3 {
