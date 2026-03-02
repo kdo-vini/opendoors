@@ -138,14 +138,30 @@ function initGSAP() {
     const overlayContainer = document.querySelector('.overlay-container');
 
     if (prefersReducedMotion) {
-        // Skip only the door animation — show content immediately.
-        // ALL other GSAP setup (fade-ins, scroll animations) MUST still run.
+        // Skip the door animation for accessibility/low power mode
+        // Make the hero immediately visible
         gsap.set('.site-content', { opacity: 1, scale: 1 });
+        // Move doors out of the way
         gsap.set('.door.left', { x: '-100%' });
         gsap.set('.door.right', { x: '100%' });
-        if (hero) { hero.style.visibility = 'hidden'; hero.style.pointerEvents = 'none'; }
+
+        // Hide overlay container so it doesn't block clicks
         if (overlayContainer) overlayContainer.style.visibility = 'hidden';
-        // Fall through to set up all scroll animations below
+
+        // IMPORTANT: Ensure hero is VISIBLE! The previous code was hiding it mistakenly
+        if (hero) {
+            hero.style.visibility = 'visible';
+            hero.style.pointerEvents = 'auto';
+        }
+
+        // Reduce the scroll spacer from 250vh to 100vh so the user 
+        // doesn't have to scroll over empty space since there is no door animation
+        const scrollSpacer = document.querySelector('.scroll-spacer');
+        if (scrollSpacer) {
+            scrollSpacer.style.height = '100vh';
+        }
+
+        // Fall through to set up all other scroll animations (fade-ins, etc.)
     } else {
         // Door Opening Animation — only when motion is acceptable
         const doorTimeline = gsap.timeline({
