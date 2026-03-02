@@ -372,23 +372,12 @@ section {
     justify-content: center;
     text-align: center;
     background: var(--gradient-hero);
-    opacity: 0;
-    transform: scale(0.8);
+    /* Starts fully visible — the doors (z-index: 100) cover it at first.
+       Only the doors animate open on scroll; no fade-in needed here. */
+    opacity: 1;
+    transform: scale(1);
     padding: var(--space-md);
     overflow: hidden;
-    /* Prevent content from escaping hero bounds */
-    /* Fallback: if GSAP never runs (CDN blocked, JS error), reveal after 3.5s */
-    animation: gsap-fallback-reveal 0.01ms 3500ms forwards;
-}
-
-/* This animation fires once after 3.5s as a safety net.
-   GSAP immediately overrides opacity/transform via inline styles when it works,
-   so in the happy path this has zero visual effect. */
-@keyframes gsap-fallback-reveal {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
 }
 
 /* Hero hidden state — !important overrides GSAP inline opacity */

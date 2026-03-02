@@ -138,14 +138,11 @@ function initGSAP() {
     const overlayContainer = document.querySelector('.overlay-container');
 
     if (prefersReducedMotion) {
-        // Skip only the door animation — show content immediately.
-        // ALL other GSAP setup (fade-ins, scroll animations) MUST still run
-        // because .fade-up elements start at opacity:0 via CSS and need GSAP
-        // to animate them visible. Returning early would leave the page blank.
-        gsap.set('.site-content', { opacity: 1, scale: 1 });
+        // Skip only the door animation — hide doors immediately.
+        // ALL other GSAP setup (fade-ins, scroll animations) MUST still run.
         gsap.set('.door.left', { x: '-100%' });
         gsap.set('.door.right', { x: '100%' });
-        // Hero is already visible — mark it so sections don't need to hide it
+        // Hero is already visible (opacity:1 in CSS) — just hide the overlay
         if (hero) hero.classList.add('hero-hidden');
         if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         // Fall through to set up all scroll animations below
@@ -171,7 +168,7 @@ function initGSAP() {
         });
 
         doorTimeline
-            // Open doors
+            // Open doors — slides them off-screen revealing the always-visible hero beneath
             .to(".door.left", {
                 x: "-100%",
                 ease: "power2.inOut"
@@ -191,14 +188,8 @@ function initGSAP() {
                 x: 150,
                 opacity: 0,
                 ease: "power2.in"
-            }, 0)
-
-            // Reveal content behind
-            .to(".site-content", {
-                opacity: 1,
-                scale: 1,
-                ease: "power2.out"
             }, 0);
+        // NOTE: site-content is always opacity:1 in CSS — no need to animate it
     } // end of !prefersReducedMotion door animation block
 
     // Hide hero as soon as ANY section starts entering the viewport from the bottom.
