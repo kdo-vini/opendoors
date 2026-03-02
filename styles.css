@@ -372,10 +372,9 @@ section {
     justify-content: center;
     text-align: center;
     background: var(--gradient-hero);
-    /* Starts fully visible — the doors (z-index: 100) cover it at first.
-       Only the doors animate open on scroll; no fade-in needed here. */
-    opacity: 1;
-    transform: scale(1);
+    /* Starts hidden — GSAP animates it visible as the doors open on scroll */
+    opacity: 0;
+    transform: scale(0.95);
     padding: var(--space-md);
     overflow: hidden;
 }

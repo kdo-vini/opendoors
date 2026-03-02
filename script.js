@@ -138,11 +138,11 @@ function initGSAP() {
     const overlayContainer = document.querySelector('.overlay-container');
 
     if (prefersReducedMotion) {
-        // Skip only the door animation — hide doors immediately.
+        // Skip only the door animation — show content immediately.
         // ALL other GSAP setup (fade-ins, scroll animations) MUST still run.
+        gsap.set('.site-content', { opacity: 1, scale: 1 });
         gsap.set('.door.left', { x: '-100%' });
         gsap.set('.door.right', { x: '100%' });
-        // Hero is already visible (opacity:1 in CSS) — just hide the overlay
         if (hero) hero.classList.add('hero-hidden');
         if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         // Fall through to set up all scroll animations below
@@ -168,7 +168,7 @@ function initGSAP() {
         });
 
         doorTimeline
-            // Open doors — slides them off-screen revealing the always-visible hero beneath
+            // Open doors
             .to(".door.left", {
                 x: "-100%",
                 ease: "power2.inOut"
@@ -178,7 +178,7 @@ function initGSAP() {
                 ease: "power2.inOut"
             }, 0)
 
-            // Parallax on door text
+            // Parallax + fade out door text
             .to(".door.left .door-text", {
                 x: -150,
                 opacity: 0,
@@ -188,19 +188,24 @@ function initGSAP() {
                 x: 150,
                 opacity: 0,
                 ease: "power2.in"
-            }, 0);
-        // NOTE: site-content is always opacity:1 in CSS — no need to animate it
+            }, 0)
+
+            // Reveal hero content behind the opening doors
+            .to(".site-content", {
+                opacity: 1,
+                scale: 1,
+                ease: "power2.out"
+            }, 0.1); // slight delay so doors start moving first
     } // end of !prefersReducedMotion door animation block
 
-    // Hide hero as soon as ANY section starts entering the viewport from the bottom.
-    // Using "top bottom" means: fire when marquee top reaches viewport bottom
-    // (i.e., the moment marquee starts entering). This prevents the hero's
-    // GPU compositor layer from bleeding through sections on mobile.
+    // THE FIX: use 'top top' instead of 'top bottom' so hero-hidden only fires
+    // when the marquee has fully entered the viewport (scroll >= 250vh, i.e.
+    // AFTER the door animation is complete). 'top bottom' was firing at ~150vh
+    // scroll — while doors were still animating — causing the black screen.
     ScrollTrigger.create({
         trigger: ".marquee-section",
-        start: "top bottom", // Hide as soon as marquee starts entering viewport
+        start: "top top",
         onEnter: () => {
-            // Use classList so CSS !important overrides GSAP inline opacity
             if (hero) hero.classList.add('hero-hidden');
             if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         },
