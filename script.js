@@ -190,30 +190,16 @@ function initGSAP() {
                 ease: "power2.in"
             }, 0)
 
-            // Reveal hero content behind the opening doors
+            // Reveal hero content behind the opening doors — animate quickly
+            // duration: 0.4 ensures it finishes in the first 40% of the timeline
+            // (doors keep moving the whole time, so this avoids the dark gap)
             .to(".site-content", {
                 opacity: 1,
                 scale: 1,
+                duration: 0.4,
                 ease: "power2.out"
-            }, 0.1); // slight delay so doors start moving first
+            }, 0.1);
     } // end of !prefersReducedMotion door animation block
-
-    // THE FIX: use 'top top' instead of 'top bottom' so hero-hidden only fires
-    // when the marquee has fully entered the viewport (scroll >= 250vh, i.e.
-    // AFTER the door animation is complete). 'top bottom' was firing at ~150vh
-    // scroll — while doors were still animating — causing the black screen.
-    ScrollTrigger.create({
-        trigger: ".marquee-section",
-        start: "top top",
-        onEnter: () => {
-            if (hero) hero.classList.add('hero-hidden');
-            if (overlayContainer) overlayContainer.style.visibility = 'hidden';
-        },
-        onLeaveBack: () => {
-            if (hero) hero.classList.remove('hero-hidden');
-            if (overlayContainer) overlayContainer.style.visibility = 'visible';
-        }
-    });
 
     // Marquee animation enhancement
     gsap.to(".marquee-track", {
