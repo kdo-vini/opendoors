@@ -62,7 +62,6 @@
 
 html {
     scroll-behavior: smooth;
-    overflow-x: hidden; /* Prevent horizontal scroll on iOS Safari */
 }
 
 body {
@@ -362,7 +361,7 @@ section {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw; /* Use vw not % to always match viewport, not scrollable area */
     height: 100vh;
     z-index: 1;
     display: flex;
@@ -374,6 +373,14 @@ section {
     opacity: 0;
     transform: scale(0.8);
     padding: var(--space-md);
+    overflow: hidden; /* Prevent content from escaping hero bounds */
+}
+
+/* Hero hidden state — !important overrides GSAP inline opacity */
+.site-content.hero-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .site-content h1 {
@@ -1501,6 +1508,24 @@ section {
 
     .portfolio-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* --- MOBILE GPU COMPOSITING FIX --- */
+/* Force sections into GPU compositor layers on mobile so they properly
+   render above the fixed hero element (which GSAP promotes to a GPU layer
+   via opacity animation). Without this, the hero bleeds through on iOS Safari. */
+@media (max-width: 1024px) {
+    .marquee-section,
+    .about-section,
+    .services-section,
+    .process-section,
+    .portfolio-section,
+    .cta-section,
+    .contact-section,
+    .footer {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
     }
 }
 

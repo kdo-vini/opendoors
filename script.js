@@ -128,83 +128,90 @@ function initLenis() {
 function initGSAP() {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Respect user's motion preference
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // Skip complex animations, just show content immediately
-        gsap.set('.site-content', { opacity: 1, scale: 1 });
-        gsap.set('.door.left', { x: '-100%' });
-        gsap.set('.door.right', { x: '100%' });
-        return;
-    }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const hero = document.getElementById('hero');
     const overlayContainer = document.querySelector('.overlay-container');
 
-    // Door Opening Animation
-    const doorTimeline = gsap.timeline({
-        scrollTrigger: {
-            trigger: ".scroll-spacer",
-            start: "top top",
-            end: "bottom bottom",
-            scrub: 1.5
-        }
-    });
+    if (prefersReducedMotion) {
+        // Skip only the door animation — show content immediately.
+        // ALL other GSAP setup (fade-ins, scroll animations) MUST still run
+        // because .fade-up elements start at opacity:0 via CSS and need GSAP
+        // to animate them visible. Returning early would leave the page blank.
+        gsap.set('.site-content', { opacity: 1, scale: 1 });
+        gsap.set('.door.left', { x: '-100%' });
+        gsap.set('.door.right', { x: '100%' });
+        // Hero is already visible — mark it so sections don't need to hide it
+        if (hero) hero.classList.add('hero-hidden');
+        if (overlayContainer) overlayContainer.style.visibility = 'hidden';
+        // Fall through to set up all scroll animations below
+    } else {
+        // Door Opening Animation — only when motion is acceptable
+        const doorTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: ".scroll-spacer",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1.5,
+                onLeave: () => {
+                    // Door animation finished — ensure hero is fully hidden
+                    if (hero) hero.classList.add('hero-hidden');
+                    if (overlayContainer) overlayContainer.style.visibility = 'hidden';
+                },
+                onEnterBack: () => {
+                    // User scrolled back up into door animation
+                    if (hero) hero.classList.remove('hero-hidden');
+                    if (overlayContainer) overlayContainer.style.visibility = 'visible';
+                }
+            }
+        });
 
-    doorTimeline
-        // Open doors
-        .to(".door.left", {
-            x: "-100%",
-            ease: "power2.inOut"
-        }, 0)
-        .to(".door.right", {
-            x: "100%",
-            ease: "power2.inOut"
-        }, 0)
+        doorTimeline
+            // Open doors
+            .to(".door.left", {
+                x: "-100%",
+                ease: "power2.inOut"
+            }, 0)
+            .to(".door.right", {
+                x: "100%",
+                ease: "power2.inOut"
+            }, 0)
 
-        // Parallax on door text
-        .to(".door.left .door-text", {
-            x: -150,
-            opacity: 0,
-            ease: "power2.in"
-        }, 0)
-        .to(".door.right .door-text", {
-            x: 150,
-            opacity: 0,
-            ease: "power2.in"
-        }, 0)
+            // Parallax on door text
+            .to(".door.left .door-text", {
+                x: -150,
+                opacity: 0,
+                ease: "power2.in"
+            }, 0)
+            .to(".door.right .door-text", {
+                x: 150,
+                opacity: 0,
+                ease: "power2.in"
+            }, 0)
 
-        // Reveal content behind
-        .to(".site-content", {
-            opacity: 1,
-            scale: 1,
-            ease: "power2.out"
-        }, 0);
+            // Reveal content behind
+            .to(".site-content", {
+                opacity: 1,
+                scale: 1,
+                ease: "power2.out"
+            }, 0);
+    } // end of !prefersReducedMotion door animation block
 
-    // Hide hero completely when user scrolls past the door animation area
-    // This prevents the fixed hero gradient from showing behind sections
+    // Hide hero as soon as ANY section starts entering the viewport from the bottom.
+    // Using "top bottom" means: fire when marquee top reaches viewport bottom
+    // (i.e., the moment marquee starts entering). This prevents the hero's
+    // GPU compositor layer from bleeding through sections on mobile.
     ScrollTrigger.create({
         trigger: ".marquee-section",
-        start: "top top", // Only hide when marquee reaches the top of viewport
-        end: "bottom top",
+        start: "top bottom", // Hide as soon as marquee starts entering viewport
         onEnter: () => {
-            // Hide hero and overlay when marquee section covers the screen
-            if (hero) {
-                hero.style.visibility = 'hidden';
-                hero.style.pointerEvents = 'none';
-            }
-            if (overlayContainer) {
-                overlayContainer.style.visibility = 'hidden';
-            }
+            // Use classList so CSS !important overrides GSAP inline opacity
+            if (hero) hero.classList.add('hero-hidden');
+            if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         },
         onLeaveBack: () => {
-            // Show hero and overlay when scrolling back up
-            if (hero) {
-                hero.style.visibility = 'visible';
-                hero.style.pointerEvents = 'auto';
-            }
-            if (overlayContainer) {
-                overlayContainer.style.visibility = 'visible';
-            }
+            if (hero) hero.classList.remove('hero-hidden');
+            if (overlayContainer) overlayContainer.style.visibility = 'visible';
         }
     });
 
