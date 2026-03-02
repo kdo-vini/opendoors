@@ -1,0 +1,227 @@
+/* ============================================
+   OPEN DOORS - UTILITIES & RESPONSIVE
+   Animations, responsive adjustments,
+   accessibility, GPU fixes, icons
+   ============================================ */
+
+/* --- ANIMATION UTILITIES --- */
+.fade-up {
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+.fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Stagger delays */
+.delay-1 {
+    transition-delay: 0.1s !important;
+}
+
+.delay-2 {
+    transition-delay: 0.2s !important;
+}
+
+.delay-3 {
+    transition-delay: 0.3s !important;
+}
+
+.delay-4 {
+    transition-delay: 0.4s !important;
+}
+
+.delay-5 {
+    transition-delay: 0.5s !important;
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 480px) {
+    section {
+        padding: var(--space-lg) var(--space-sm);
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- MOBILE GPU COMPOSITING FIX --- */
+/* Force sections into GPU compositor layers on mobile so they properly
+   render above the fixed hero element (which GSAP promotes to a GPU layer
+   via opacity animation). Without this, the hero bleeds through on iOS Safari. */
+@media (max-width: 1024px) {
+
+    .marquee-section,
+    .about-section,
+    .services-section,
+    .process-section,
+    .portfolio-section,
+    .cta-section,
+    .contact-section,
+    .footer {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+}
+
+/* --- TOUCH TARGETS & MOBILE UX --- */
+@media (max-width: 768px) {
+
+    /* Minimum 44px touch targets (Apple HIG / WCAG) */
+    .btn {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+
+    .social-link {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .carousel-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .footer-links a {
+        display: inline-block;
+        padding: 6px 0;
+        min-height: 44px;
+        line-height: 32px;
+    }
+
+    /* Prevent hover state sticking on touch devices */
+    .service-card:hover {
+        transform: none;
+    }
+
+    .differential-item:hover {
+        transform: none;
+        background: rgba(255, 195, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+        transform: none;
+        box-shadow: var(--shadow-glow);
+    }
+
+    .btn-outline:hover {
+        transform: none;
+    }
+
+    /* About section alignment fix on mobile */
+    .about-content .section-header {
+        text-align: center !important;
+    }
+
+    .about-content {
+        text-align: center;
+    }
+
+    /* Word break for long email/text on mobile */
+    .contact-item a {
+        word-break: break-all;
+        overflow-wrap: anywhere;
+    }
+
+    /* Process timeline padding fix on very small screens */
+    .process-timeline {
+        padding-left: var(--space-md);
+    }
+
+    .process-timeline::before {
+        left: 7px;
+    }
+
+    .step-number {
+        left: calc(-1 * var(--space-md) - 13px);
+    }
+}
+
+/* --- PREFERS REDUCED MOTION --- */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .marquee-track {
+        animation: none;
+        display: flex;
+        gap: var(--space-lg);
+    }
+
+    .marquee-track .marquee-content:last-child {
+        display: none;
+    }
+
+    .carousel-track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* --- ICON STYLES --- */
+.icon-sm {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Lucide Icons Styling */
+[data-lucide] {
+    stroke-width: 1.5px;
+}
+
+.service-icon [data-lucide],
+.service-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--white) !important;
+}
+
+.differential-item .icon [data-lucide],
+.differential-item .icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--white) !important;
+}
+
+.contact-item .icon svg,
+.contact-item .icon [data-lucide] {
+    width: 24px;
+    height: 24px;
+    color: var(--white) !important;
+}
+
+.social-link svg,
+.social-link [data-lucide] {
+    width: 20px;
+    height: 20px;
+    color: var(--white) !important;
+}

@@ -1,0 +1,247 @@
+/* ============================================
+   OPEN DOORS - HERO & DOOR ANIMATION
+   Site content, scroll indicator, doors,
+   mobile swipe indicator, scroll spacer
+   ============================================ */
+
+/* --- HERO SECTION (DOOR ANIMATION) --- */
+.site-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: var(--gradient-hero);
+    /* Starts hidden — GSAP animates it visible as the doors open on scroll */
+    opacity: 0;
+    transform: scale(0.95);
+    padding: var(--space-md);
+    overflow: hidden;
+}
+
+.site-content h1 {
+    margin-bottom: var(--space-sm);
+}
+
+.site-content .tagline {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    margin-bottom: var(--space-md);
+    opacity: 0.8;
+}
+
+.hero-cta {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .hero-cta {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0 var(--space-sm);
+    }
+
+    .hero-cta .btn {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
+}
+
+.scroll-indicator .arrow {
+    width: 24px;
+    height: 24px;
+    border-right: 2px solid var(--accent);
+    border-bottom: 2px solid var(--accent);
+    transform: rotate(45deg);
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(10px);
+    }
+}
+
+/* --- MOBILE SWIPE INDICATOR --- */
+.mobile-swipe-indicator {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    padding: var(--space-md);
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+    text-align: center;
+    pointer-events: none;
+}
+
+.mobile-swipe-indicator .swipe-content {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 195, 0, 0.3);
+    border-radius: var(--radius-lg);
+    padding: var(--space-sm) var(--space-md);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mobile-swipe-indicator .swipe-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: swipe-bounce 1.5s ease-in-out infinite;
+}
+
+.mobile-swipe-indicator .swipe-icon::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-left: 3px solid var(--accent);
+    border-top: 3px solid var(--accent);
+    transform: rotate(45deg);
+}
+
+.mobile-swipe-indicator .swipe-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+}
+
+@keyframes swipe-bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-swipe-indicator {
+        display: block;
+    }
+
+    .scroll-indicator {
+        display: none;
+    }
+}
+
+.mobile-swipe-indicator.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* --- DOOR OVERLAY --- */
+.overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.door {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-bottom: 5px solid var(--accent);
+}
+
+.door.left {
+    left: 0;
+    justify-content: flex-end;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: inset -10px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+.door.right {
+    right: 0;
+    justify-content: flex-start;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: inset 10px 0 30px rgba(0, 0, 0, 0.4);
+}
+
+.door-text {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(3rem, 10vw, 10rem);
+    color: var(--accent);
+    white-space: nowrap;
+    line-height: 1;
+    padding: 0 10px;
+    text-shadow: 0 0 40px rgba(255, 195, 0, 0.3);
+}
+
+.door.right .door-text {
+    color: var(--white);
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+}
+
+/* Scroll Spacer */
+.scroll-spacer {
+    height: 250vh;
+    width: 100%;
+    position: relative;
+    z-index: 0;
+}
+
+@media (max-width: 768px) {
+    .scroll-spacer {
+        height: 200vh;
+    }
+}
