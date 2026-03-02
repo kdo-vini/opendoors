@@ -74,9 +74,8 @@
 
 @media (max-width: 768px) {
     .about-section {
-        min-height: 100vh;
-        padding-top: var(--space-lg);
-        padding-bottom: var(--space-lg);
+        padding-top: var(--space-md);
+        padding-bottom: var(--space-md);
     }
 }
 

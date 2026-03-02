@@ -111,7 +111,7 @@ function initLenis() {
         orientation: 'vertical',
         gestureOrientation: 'vertical',
         smoothWheel: true,
-        smoothTouch: false,
+        smoothTouch: false, // Mobile should use native hardware-accelerated momentum scroll
         touchMultiplier: 2,
     });
 
@@ -132,52 +132,50 @@ function initLenis() {
 function initGSAP() {
     gsap.registerPlugin(ScrollTrigger);
 
+    // VERY IMPORTANT FOR MOBILE:
+    // Hiding/showing the URL bar on mobile triggers a resize event.
+    // By default, GSAP recalculates all ScrollTriggers on resize, causing massive scroll stutter.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.innerWidth <= 768;
 
     const hero = document.getElementById('hero');
     const overlayContainer = document.querySelector('.overlay-container');
 
-    if (prefersReducedMotion) {
-        // Skip the door animation for accessibility/low power mode
+    if (prefersReducedMotion || isMobile) {
+        // Skip the door animation for accessibility/low power mode OR mobile devices
         // Make the hero immediately visible
         gsap.set('.site-content', { opacity: 1, scale: 1 });
-        // Move doors out of the way
+
+        // Move doors out of the way (though they are display:none on mobile anyway)
         gsap.set('.door.left', { x: '-100%' });
         gsap.set('.door.right', { x: '100%' });
 
         // Hide overlay container so it doesn't block clicks
         if (overlayContainer) overlayContainer.style.visibility = 'hidden';
 
-        // IMPORTANT: Ensure hero is VISIBLE! The previous code was hiding it mistakenly
         if (hero) {
             hero.style.visibility = 'visible';
             hero.style.pointerEvents = 'auto';
         }
 
-        // Reduce the scroll spacer from 250vh to 100vh so the user 
-        // doesn't have to scroll over empty space since there is no door animation
-        const scrollSpacer = document.querySelector('.scroll-spacer');
-        if (scrollSpacer) {
-            scrollSpacer.style.height = '100vh';
-        }
-
-        // Fall through to set up all other scroll animations (fade-ins, etc.)
     } else {
-        // Door Opening Animation — only when motion is acceptable
+        // Door Opening Animation — SENIOR ARCHITECTURE (Pinning)
+        // We pin the entire #hero-container wrapper while scrubbing the doors open.
+        // This eliminates all mobile Safari 100vh bugs!
         const doorTimeline = gsap.timeline({
             scrollTrigger: {
-                trigger: ".scroll-spacer",
+                trigger: "#hero-container",
                 start: "top top",
-                end: "bottom bottom",
-                scrub: 1.5,
+                end: "+=150%", // Scroll distance to open doors (adjust for speed)
+                pin: true,     // Magic: freezes the hero section while doors open
+                scrub: 1,      // Smooth scrubbing
                 onLeave: () => {
-                    // Door animation finished — hide hero layer to save GPU memory
-                    if (hero) { hero.style.visibility = 'hidden'; hero.style.pointerEvents = 'none'; }
+                    // Hide overlay so it doesn't block clicks on content below
                     if (overlayContainer) overlayContainer.style.visibility = 'hidden';
                 },
                 onEnterBack: () => {
-                    // User scrolled back up into door animation
-                    if (hero) { hero.style.visibility = 'visible'; hero.style.pointerEvents = ''; }
                     if (overlayContainer) overlayContainer.style.visibility = 'visible';
                 }
             }
@@ -185,14 +183,14 @@ function initGSAP() {
 
         doorTimeline
             // Open doors
-            .to(".door.left", { x: "-100%", ease: "power2.inOut" }, 0)
-            .to(".door.right", { x: "100%", ease: "power2.inOut" }, 0)
-            // Parallax + fade out door text
-            .to(".door.left .door-text", { x: -150, opacity: 0, ease: "power2.in" }, 0)
-            .to(".door.right .door-text", { x: 150, opacity: 0, ease: "power2.in" }, 0)
-            // Reveal hero content — animate quickly (40% of timeline)
-            .to(".site-content", { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 0.1);
-    } // end of !prefersReducedMotion door animation block
+            .to(".door.left", { x: "-100%", ease: "none" }, 0)
+            .to(".door.right", { x: "100%", ease: "none" }, 0)
+            // Fade out door text
+            .to(".door.left .door-text", { x: -100, opacity: 0, ease: "power1.in" }, 0)
+            .to(".door.right .door-text", { x: 100, opacity: 0, ease: "power1.in" }, 0)
+            // Reveal hero content smoothly via scale and opacity
+            .to(".site-content", { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, 0.1);
+    }
 
     // Marquee animation enhancement
     gsap.to(".marquee-track", {

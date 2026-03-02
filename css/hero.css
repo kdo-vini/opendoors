@@ -5,13 +5,20 @@
    ============================================ */
 
 /* --- HERO SECTION (DOOR ANIMATION) --- */
-.site-content {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
+.hero-wrapper {
+    position: relative;
+    width: 100%;
     height: 100vh;
     height: 100dvh;
+    overflow: hidden;
+}
+
+.site-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -19,11 +26,10 @@
     justify-content: center;
     text-align: center;
     background: var(--gradient-hero);
-    /* Starts hidden — GSAP animates it visible as the doors open on scroll */
+    /* GSAP fades this in, but it starts visible if reduced motion is on */
     opacity: 0;
     transform: scale(0.95);
     padding: var(--space-md);
-    overflow: hidden;
 }
 
 .site-content h1 {
@@ -101,93 +107,44 @@
 /* --- MOBILE SWIPE INDICATOR --- */
 .mobile-swipe-indicator {
     display: none;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 101;
-    padding: var(--space-md);
-    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
-    text-align: center;
-    pointer-events: none;
-}
-
-.mobile-swipe-indicator .swipe-content {
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 195, 0, 0.3);
-    border-radius: var(--radius-lg);
-    padding: var(--space-sm) var(--space-md);
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.mobile-swipe-indicator .swipe-icon {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: swipe-bounce 1.5s ease-in-out infinite;
-}
-
-.mobile-swipe-indicator .swipe-icon::before {
-    content: '';
-    width: 20px;
-    height: 20px;
-    border-left: 3px solid var(--accent);
-    border-top: 3px solid var(--accent);
-    transform: rotate(45deg);
-}
-
-.mobile-swipe-indicator .swipe-text {
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--accent);
-}
-
-@keyframes swipe-bounce {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
-}
-
-@media (max-width: 768px) {
-    .mobile-swipe-indicator {
-        display: block;
-    }
-
-    .scroll-indicator {
-        display: none;
-    }
-}
-
-.mobile-swipe-indicator.hidden {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 /* --- DOOR OVERLAY --- */
 .overlay-container {
-    position: fixed;
+    position: absolute;
+    /* No longer fixed, it lives inside the pinned wrapper */
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
     z-index: 100;
     pointer-events: none;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+
+    /* Hide the doors completely on mobile for a simpler layout */
+    .overlay-container {
+        display: none;
+    }
+
+    .hero-wrapper {
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: auto;
+    }
+
+    .site-content {
+        position: relative;
+        opacity: 1;
+        /* Make sure hero text is visible immediately since doors are gone */
+        transform: scale(1);
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding-bottom: var(--space-xl);
+        /* Add extra padding at the bottom so CTA doesn't overlap scroll indicator if screen is tiny */
+    }
 }
 
 .door {
@@ -232,16 +189,4 @@
     text-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
 }
 
-/* Scroll Spacer */
-.scroll-spacer {
-    height: 250vh;
-    width: 100%;
-    position: relative;
-    z-index: 0;
-}
-
-@media (max-width: 768px) {
-    .scroll-spacer {
-        height: 200vh;
-    }
-}
+/* Removed .scroll-spacer because GSAP pinSpacing handles it automatically now */
