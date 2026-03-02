@@ -143,7 +143,7 @@ function initGSAP() {
         gsap.set('.site-content', { opacity: 1, scale: 1 });
         gsap.set('.door.left', { x: '-100%' });
         gsap.set('.door.right', { x: '100%' });
-        if (hero) hero.classList.add('hero-hidden');
+        if (hero) { hero.style.visibility = 'hidden'; hero.style.pointerEvents = 'none'; }
         if (overlayContainer) overlayContainer.style.visibility = 'hidden';
         // Fall through to set up all scroll animations below
     } else {
@@ -155,13 +155,13 @@ function initGSAP() {
                 end: "bottom bottom",
                 scrub: 1.5,
                 onLeave: () => {
-                    // Door animation finished — ensure hero is fully hidden
-                    if (hero) hero.classList.add('hero-hidden');
+                    // Door animation finished — hide hero layer to save GPU memory
+                    if (hero) { hero.style.visibility = 'hidden'; hero.style.pointerEvents = 'none'; }
                     if (overlayContainer) overlayContainer.style.visibility = 'hidden';
                 },
                 onEnterBack: () => {
                     // User scrolled back up into door animation
-                    if (hero) hero.classList.remove('hero-hidden');
+                    if (hero) { hero.style.visibility = 'visible'; hero.style.pointerEvents = ''; }
                     if (overlayContainer) overlayContainer.style.visibility = 'visible';
                 }
             }
@@ -169,36 +169,13 @@ function initGSAP() {
 
         doorTimeline
             // Open doors
-            .to(".door.left", {
-                x: "-100%",
-                ease: "power2.inOut"
-            }, 0)
-            .to(".door.right", {
-                x: "100%",
-                ease: "power2.inOut"
-            }, 0)
-
+            .to(".door.left", { x: "-100%", ease: "power2.inOut" }, 0)
+            .to(".door.right", { x: "100%", ease: "power2.inOut" }, 0)
             // Parallax + fade out door text
-            .to(".door.left .door-text", {
-                x: -150,
-                opacity: 0,
-                ease: "power2.in"
-            }, 0)
-            .to(".door.right .door-text", {
-                x: 150,
-                opacity: 0,
-                ease: "power2.in"
-            }, 0)
-
-            // Reveal hero content behind the opening doors — animate quickly
-            // duration: 0.4 ensures it finishes in the first 40% of the timeline
-            // (doors keep moving the whole time, so this avoids the dark gap)
-            .to(".site-content", {
-                opacity: 1,
-                scale: 1,
-                duration: 0.4,
-                ease: "power2.out"
-            }, 0.1);
+            .to(".door.left .door-text", { x: -150, opacity: 0, ease: "power2.in" }, 0)
+            .to(".door.right .door-text", { x: 150, opacity: 0, ease: "power2.in" }, 0)
+            // Reveal hero content — animate quickly (40% of timeline)
+            .to(".site-content", { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 0.1);
     } // end of !prefersReducedMotion door animation block
 
     // Marquee animation enhancement
@@ -263,27 +240,21 @@ function initScrollAnimations() {
         );
     });
 
-    // Service cards stagger
-    gsap.fromTo(".service-card",
-        {
-            opacity: 0,
-            y: 80,
-            scale: 0.9
-        },
-        {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: ".services-grid",
-                start: "top 80%",
-                toggleActions: "play none none none"
+    // Service cards stagger (guard: only if elements exist)
+    if (document.querySelector('.services-grid')) {
+        gsap.fromTo(".service-card",
+            { opacity: 0, y: 80, scale: 0.9 },
+            {
+                opacity: 1, y: 0, scale: 1,
+                duration: 0.8, stagger: 0.15, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: ".services-grid",
+                    start: "top 80%",
+                    toggleActions: "play none none none"
+                }
             }
-        }
-    );
+        );
+    }
 
     // Process timeline
     const processSteps = document.querySelectorAll('.process-step');
@@ -294,88 +265,40 @@ function initScrollAnimations() {
             start: "top 70%",
             onEnter: () => {
                 step.classList.add('active');
-
-                // Add active class sequentially
                 gsap.to(step.querySelector('.step-number'), {
-                    scale: 1.1,
-                    duration: 0.3,
-                    yoyo: true,
-                    repeat: 1
+                    scale: 1.1, duration: 0.3, yoyo: true, repeat: 1
                 });
             }
         });
     });
 
-    // Portfolio cards
-    gsap.fromTo(".portfolio-card",
-        {
-            opacity: 0,
-            y: 100,
-        },
-        {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: ".portfolio-grid",
-                start: "top 80%",
-                toggleActions: "play none none none"
-            }
-        }
-    );
-
-    // Testimonial cards
-    gsap.fromTo(".testimonial-card",
-        {
-            opacity: 0,
-            x: 50,
-        },
-        {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: ".testimonials-slider",
-                start: "top 80%",
-                toggleActions: "play none none none"
-            }
-        }
-    );
-
     // CTA section parallax
-    gsap.to(".cta-content", {
-        scrollTrigger: {
-            trigger: ".cta-section",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1
-        },
-        y: -30,
-        ease: "none"
-    });
+    if (document.querySelector('.cta-section')) {
+        gsap.to(".cta-content", {
+            scrollTrigger: {
+                trigger: ".cta-section",
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1
+            },
+            y: -30, ease: "none"
+        });
+    }
 
     // Contact form
-    gsap.fromTo(".contact-form",
-        {
-            opacity: 0,
-            x: 50
-        },
-        {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-                trigger: ".contact-grid",
-                start: "top 75%",
-                toggleActions: "play none none none"
+    if (document.querySelector('.contact-grid')) {
+        gsap.fromTo(".contact-form",
+            { opacity: 0, x: 50 },
+            {
+                opacity: 1, x: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: {
+                    trigger: ".contact-grid",
+                    start: "top 75%",
+                    toggleActions: "play none none none"
+                }
             }
-        }
-    );
+        );
+    }
 }
 
 /* --- COUNTER UP ANIMATION --- */
